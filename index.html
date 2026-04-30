@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>治愈花园</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f5f0e8;
+  --text:#3d3a36;
+  --text-light:#7a756e;
+  --accent:#6b8f71;
+  --accent-light:#9bb89e;
+  --pink:#c9908f;
+  --pink-light:#deb5b4;
+  --lavender:#a698b8;
+  --cream:#ede7db;
+  --sky-top:#c8d8e8;
+  --sky-bottom:#e8ddd0;
+  --glass:rgba(255,255,255,0.45);
+  --glass-border:rgba(255,255,255,0.6);
+  --shadow:0 8px 32px rgba(61,58,54,0.06);
+  --shadow-lg:0 16px 48px rgba(61,58,54,0.1);
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans SC',sans-serif;
+  background:linear-gradient(180deg,#f5f0e8 0%,#ede7db 40%,#f0ebe3 60%,#f5f0e8 100%);
+  background-attachment:fixed;
+  color:var(--text);
+  overflow-x:hidden;
+  line-height:1.8;
+}
+
+/* === Parallax Landscape === */
+.landscape{
+  position:relative;
+  height:100vh;
+  min-height:700px;
+  overflow:hidden;
+  background:linear-gradient(180deg,var(--sky-top) 0%,#d4dde8 40%,var(--sky-bottom) 100%);
+}
+.landscape-layer{
+  position:absolute;
+  bottom:0;left:0;width:100%;
+  pointer-events:none;
+  will-change:transform;
+}
+.landscape-layer svg{
+  display:block;
+  width:100%;
+  height:auto;
+  min-height:100%;
+}
+
+/* Floating clouds */
+.cloud{
+  position:absolute;
+  opacity:0.5;
+  will-change:transform;
+}
+.cloud-1{
+  top:12%;left:10%;
+  animation:cloudDrift 30s linear infinite;
+}
+.cloud-2{
+  top:8%;left:55%;
+  animation:cloudDrift 25s linear infinite reverse;
+  animation-delay:-8s;
+  opacity:0.35;
+}
+.cloud-3{
+  top:18%;left:78%;
+  animation:cloudDrift 35s linear infinite;
+  animation-delay:-15s;
+  opacity:0.4;
+}
+@keyframes cloudDrift{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(80px)}
+}
+
+/* Birds */
+.birds{
+  position:absolute;
+  top:15%;right:15%;
+  opacity:0.3;
+  animation:birdFly 20s ease-in-out infinite;
+}
+@keyframes birdFly{
+  0%,100%{transform:translate(0,0)}
+  25%{transform:translate(-30px,15px)}
+  50%{transform:translate(-60px,5px)}
+  75%{transform:translate(-30px,20px)}
+}
+
+/* Hero overlay */
+.hero-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
+  text-align:center;
+  padding:0 24px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 20px;
+  background:rgba(255,255,255,0.5);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.7);
+  border-radius:999px;
+  font-size:13px;color:var(--accent);
+  letter-spacing:3px;
+  margin-bottom:28px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.05);
+}
+.hero-title{
+  font-family:'Noto Serif SC',serif;
+  font-size:clamp(48px,10vw,88px);
+  font-weight:700;
+  line-height:1.15;
+  margin-bottom:20px;
+  color:var(--text);
+  text-shadow:0 2px 20px rgba(255,255,255,0.5);
+}
+.hero-title .highlight{
+  background:linear-gradient(135deg,var(--accent),var(--accent-light),var(--pink));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{
+  font-size:clamp(16px,2vw,20px);
+  color:var(--text-light);
+  max-width:480px;
+  font-weight:300;
+  line-height:2;
+  text-shadow:0 1px 10px rgba(255,255,255,0.5);
+  margin-bottom:40px;
+}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 36px;
+  background:var(--accent);
+  color:white;
+  border:none;border-radius:999px;
+  font-size:15px;font-weight:500;
+  letter-spacing:1px;
+  cursor:pointer;
+  transition:all 0.3s;
+  box-shadow:0 8px 24px rgba(107,143,113,0.3);
+  text-decoration:none;
+}
+.hero-cta:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 32px rgba(107,143,113,0.4);
+}
+
+/* Scroll indicator */
+.scroll-hint{
+  position:absolute;
+  bottom:40px;left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  opacity:0.6;
+}
+.scroll-hint span{
+  font-size:11px;color:var(--text-light);
+  letter-spacing:2px;
+  text-shadow:0 1px 6px rgba(255,255,255,0.5);
+}
+.scroll-mouse{
+  width:22px;height:36px;
+  border:2px solid var(--text-light);
+  border-radius:11px;
+  position:relative;
+  opacity:0.5;
+}
+.scroll-mouse::after{
+  content:'';position:absolute;
+  top:6px;left:50%;
+  transform:translateX(-50%);
+  width:3px;height:8px;
+  background:var(--text-light);
+  border-radius:2px;
+  animation:scrollWheel 2s ease-in-out infinite;
+}
+@keyframes scrollWheel{
+  0%,100%{transform:translateX(-50%) translateY(0);opacity:1}
+  50%{transform:translateX(-50%) translateY(8px);opacity:0.3}
+}
+
+/* === Transition (path into garden) === */
+.path-transition{
+  position:relative;
+  height:200px;
+  background:linear-gradient(180deg,transparent,var(--bg));
+  margin-top:-200px;
+  z-index:5;
+}
+
+/* === Glassmorphic Nav === */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:0 40px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:transparent;
+  transition:all 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.nav.scrolled{
+  background:rgba(245,240,232,0.8);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.4);
+  box-shadow:0 4px 24px rgba(61,58,54,0.04);
+}
+
+/* === 3D Card Tilt === */
+.tilt-card{
+  perspective:800px;
+  transform-style:preserve-3d;
+}
+.tilt-card .tilt-inner{
+  position:relative;
+  transition:transform 0.15s ease-out,box-shadow 0.3s;
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.tilt-card .tilt-glare{
+  position:absolute;inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 0.3s;
+  background:radial-gradient(circle at var(--glare-x,50%) var(--glare-y,50%),
+    rgba(255,255,255,0.25),transparent 60%);
+  z-index:2;
+}
+.tilt-card:hover .tilt-glare{opacity:1}
+
+/* === Floating 3D Particles === */
+.float-particles{
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  overflow:hidden;
+  perspective:1000px;
+}
+.float-particle{
+  position:absolute;
+  border-radius:50%;
+  will-change:transform;
+  transform-style:preserve-3d;
+  backdrop-filter:blur(40px);
+  -webkit-backdrop-filter:blur(40px);
+  border:1px solid rgba(255,255,255,0.3);
+}
+.fp-1{
+  width:80px;height:80px;
+  background:rgba(155,184,158,0.12);
+  top:20%;left:15%;
+  animation:fpFloat1 18s ease-in-out infinite;
+}
+.fp-2{
+  width:60px;height:60px;
+  background:rgba(212,160,160,0.1);
+  top:60%;right:10%;
+  animation:fpFloat2 22s ease-in-out infinite;
+  animation-delay:-5s;
+}
+.fp-3{
+  width:100px;height:100px;
+  background:rgba(184,169,201,0.1);
+  top:40%;left:60%;
+  animation:fpFloat3 20s ease-in-out infinite;
+  animation-delay:-10s;
+}
+.fp-4{
+  width:50px;height:50px;
+  background:rgba(155,184,158,0.08);
+  top:75%;left:30%;
+  animation:fpFloat1 15s ease-in-out infinite reverse;
+}
+.fp-5{
+  width:70px;height:70px;
+  background:rgba(212,160,160,0.08);
+  top:10%;right:25%;
+  animation:fpFloat2 25s ease-in-out infinite;
+  animation-delay:-8s;
+}
+@keyframes fpFloat1{
+  0%,100%{transform:translate3d(0,0,0) rotateX(0) rotateY(0)}
+  25%{transform:translate3d(30px,-40px,60px) rotateX(90deg) rotateY(45deg)}
+  50%{transform:translate3d(-20px,20px,30px) rotateX(180deg) rotateY(90deg)}
+  75%{transform:translate3d(40px,30px,50px) rotateX(270deg) rotateY(135deg)}
+}
+@keyframes fpFloat2{
+  0%,100%{transform:translate3d(0,0,0) rotateY(0)}
+  33%{transform:translate3d(-40px,30px,80px) rotateY(120deg)}
+  66%{transform:translate3d(20px,-20px,40px) rotateY(240deg)}
+}
+@keyframes fpFloat3{
+  0%,100%{transform:translate3d(0,0,0) rotateX(0) rotateZ(0)}
+  50%{transform:translate3d(25px,-35px,70px) rotateX(180deg) rotateZ(90deg)}
+}
+
+/* === Section 3D Reveal === */
+.reveal-3d{
+  opacity:0;
+  transform:perspective(1000px) rotateX(8deg) translateY(60px);
+  transition:all 1s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal-3d.visible{
+  opacity:1;
+  transform:perspective(1000px) rotateX(0) translateY(0);
+}
+
+/* === Hero 3D Depth === */
+.hero-overlay{
+  transform:translateZ(30px);
+  transform-style:preserve-3d;
+}
+.hero-title{
+  transform:translateZ(50px);
+  text-shadow:0 4px 30px rgba(255,255,255,0.6);
+}
+.hero-sub{
+  transform:translateZ(20px);
+}
+.hero-cta{
+  transform:translateZ(40px);
+}
+
+/* === Landscape 3D perspective === */
+.landscape{
+  perspective:1200px;
+  perspective-origin:50% 60%;
+  transform-style:preserve-3d;
+}
+.nav-logo{
+  font-family:'Noto Serif SC',serif;
+  font-size:17px;font-weight:600;
+  color:var(--accent);
+  letter-spacing:2px;
+}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{
+  text-decoration:none;color:var(--text-light);
+  font-size:14px;
+  position:relative;transition:color 0.3s;
+}
+.nav-links a::after{
+  content:'';position:absolute;
+  bottom:-4px;left:0;width:0;height:2px;
+  background:var(--accent);border-radius:1px;
+  transition:width 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{width:100%}
+
+/* === Sections === */
+.content{position:relative;z-index:6;background:var(--bg)}
+section{
+  padding:100px 40px;
+  max-width:1100px;margin:0 auto;
+}
+.section-header{text-align:center;margin-bottom:64px}
+.section-tag{
+  display:inline-block;
+  font-size:12px;letter-spacing:3px;
+  color:var(--accent);
+  margin-bottom:12px;
+}
+.section-title{
+  font-family:'Noto Serif SC',serif;
+  font-size:clamp(28px,4.5vw,44px);
+  font-weight:600;color:var(--text);
+  margin-bottom:14px;
+}
+.section-desc{
+  font-size:15px;color:var(--text-light);
+  max-width:460px;margin:0 auto;
+  font-weight:300;
+}
+
+/* === Immersive Sections === */
+.scenic{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  padding:80px 40px;
+  position:relative;
+  overflow:hidden;
+  transition:background 0.6s ease;
+}
+
+/* Per-section themes */
+.theme-sunrise{
+  background:linear-gradient(135deg,rgba(255,200,150,0.08),rgba(255,160,100,0.04),transparent 60%);
+}
+.theme-tea{
+  background:linear-gradient(135deg,rgba(200,180,150,0.08),rgba(180,160,130,0.04),transparent 60%);
+}
+.theme-book{
+  background:linear-gradient(135deg,rgba(160,180,200,0.25),rgba(140,160,180,0.04),transparent 60%);
+}
+.theme-tree{
+  background:linear-gradient(135deg,rgba(140,190,140,0.08),rgba(120,170,120,0.04),transparent 60%);
+}
+.theme-moon{
+  background:linear-gradient(135deg,rgba(160,150,200,0.08),rgba(140,130,180,0.04),transparent 60%);
+}
+.theme-music{
+  background:linear-gradient(135deg,rgba(200,170,130,0.08),rgba(180,150,110,0.04),transparent 60%);
+}
+.theme-cloud{
+  background:linear-gradient(135deg,rgba(180,200,210,0.25),rgba(160,180,190,0.04),transparent 60%);
+}
+.theme-gold{
+  background:linear-gradient(135deg,rgba(220,190,100,0.08),rgba(200,170,80,0.04),transparent 60%);
+}
+.theme-green{
+  background:linear-gradient(135deg,rgba(130,180,130,0.08),rgba(110,160,110,0.04),transparent 60%);
+}
+.theme-pink{
+  background:linear-gradient(135deg,rgba(220,170,170,0.08),rgba(200,150,150,0.04),transparent 60%);
+}
+.theme-blue{
+  background:linear-gradient(135deg,rgba(150,180,210,0.08),rgba(130,160,190,0.04),transparent 60%);
+}
+.theme-purple{
+  background:linear-gradient(135deg,rgba(180,160,200,0.08),rgba(160,140,180,0.04),transparent 60%);
+}
+.theme-warm{
+  background:linear-gradient(135deg,rgba(210,180,140,0.08),rgba(190,160,120,0.04),transparent 60%);
+}
+.scenic-inner{
+  max-width:600px;
+  position:relative;
+  z-index:2;
+}
+.scenic-emoji{
+  font-size:clamp(64px,12vw,120px);
+  display:block;
+  margin-bottom:32px;
+  opacity:0;
+  transform:translateY(40px) scale(0.8);
+  transition:all 1s cubic-bezier(0.22,1,0.36,1);
+  will-change:transform;
+}
+.scenic.in-view .scenic-emoji{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+.scenic-title{
+  font-family:'Noto Serif SC',serif;
+  font-size:clamp(28px,5vw,44px);
+  font-weight:600;
+  color:var(--text);
+  margin-bottom:20px;
+  opacity:0;
+  transform:translateY(30px);
+  transition:all 0.8s cubic-bezier(0.22,1,0.36,1) 0.15s;
+}
+.scenic.in-view .scenic-title{
+  opacity:1;
+  transform:translateY(0);
+}
+.scenic-text{
+  font-size:clamp(16px,2.2vw,20px);
+  color:var(--text-light);
+  line-height:2.6;
+  font-weight:300;
+  opacity:0;
+  transform:translateY(20px);
+  transition:all 0.8s cubic-bezier(0.22,1,0.36,1) 0.3s;
+}
+.scenic-text br{
+  display:block;
+  content:'';
+  margin-top:4px;
+}
+.scenic-sign{
+  display:block;
+  margin-top:20px;
+  font-family:'Noto Serif SC',serif;
+  font-size:14px;
+  color:var(--accent);
+  letter-spacing:2px;
+  opacity:0.7;
+}
+.scenic.in-view .scenic-text{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* Background orbs per section */
+.scenic-bg{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(80px);
+  pointer-events:none;
+  z-index:1;
+  opacity:0.15;
+}
+
+/* Scene decorations */
+.scenic-scene{
+  position:absolute;inset:0;
+  pointer-events:none;
+  z-index:2;
+  overflow:hidden;
+}
+.scenic-scene svg{
+  position:absolute;bottom:0;left:0;width:100%;height:auto;
+}
+.scene-cloud{
+  position:absolute;
+  opacity:0.4;
+}
+.scene-bird{
+  position:absolute;
+  opacity:0.25;
+}
+
+/* Alternating layouts */
+.scenic-left .scenic-inner{
+  margin-left:clamp(180px,18vw,420px);
+}
+.scenic-right .scenic-inner{
+  margin-left:auto;
+  margin-right:15%;
+  text-align:right;
+}
+.scenic-right .scenic-emoji{
+  margin-left:auto;
+}
+
+/* === Quote === */
+.quote-section{
+  padding:100px 40px;
+  max-width:1100px;margin:0 auto;
+  text-align:center;
+  position:relative;
+}
+.quote-bg{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(155,184,158,0.12),transparent 70%);
+  border-radius:50%;
+  pointer-events:none;
+}
+.quote-mark{
+  font-family:Georgia,serif;
+  font-size:120px;line-height:1;
+  color:var(--accent);opacity:0.1;
+  margin-bottom:-40px;
+  position:relative;z-index:1;
+}
+.quote-text{
+  font-family:'Noto Serif SC',serif;
+  font-size:clamp(20px,3vw,30px);
+  font-weight:300;
+  max-width:640px;margin:0 auto;
+  line-height:2;color:var(--text);
+  position:relative;z-index:1;
+}
+.quote-author{
+  margin-top:24px;
+  font-size:14px;color:var(--text-light);
+  letter-spacing:2px;
+  position:relative;z-index:1;
+}
+
+/* === Breathing === */
+.breathing-wrap{
+  padding:80px 40px 100px;
+  max-width:1100px;margin:0 auto;
+}
+.breathing-container{
+  display:flex;align-items:center;justify-content:center;
+  gap:60px;margin-top:48px;
+}
+.breathing-visual{
+  position:relative;width:200px;height:200px;flex-shrink:0;
+}
+.breathing-ring{
+  position:absolute;inset:0;
+  border-radius:50%;
+  border:2px solid var(--accent-light);
+  opacity:0.25;
+}
+.breathing-ring:nth-child(2){
+  inset:15px;border-color:var(--pink-light);
+  animation:ringPulse 6s ease-in-out infinite 0.5s;
+}
+.breathing-ring:nth-child(3){
+  inset:30px;border-color:var(--lavender);
+  animation:ringPulse 6s ease-in-out infinite 1s;
+}
+.breathing-core{
+  position:absolute;inset:50px;
+  border-radius:50%;
+  background:linear-gradient(135deg,rgba(155,184,158,0.25),rgba(222,181,180,0.25));
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  animation:breathe 6s ease-in-out infinite;
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,0.4);
+}
+.breathing-core span{
+  font-size:14px;color:var(--text);
+  font-weight:500;letter-spacing:2px;
+}
+@keyframes breathe{
+  0%,100%{transform:scale(0.85);opacity:0.6}
+  50%{transform:scale(1.15);opacity:1}
+}
+@keyframes ringPulse{
+  0%,100%{transform:scale(0.9);opacity:0.1}
+  50%{transform:scale(1.1);opacity:0.35}
+}
+.breathing-text{text-align:left;max-width:340px}
+.breathing-text h3{
+  font-family:'Noto Serif SC',serif;
+  font-size:22px;font-weight:600;
+  margin-bottom:14px;color:var(--text);
+}
+.breathing-text p{
+  font-size:14px;color:var(--text-light);
+  line-height:2;font-weight:300;
+}
+.breathing-tips{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.breathing-tip{
+  padding:5px 14px;
+  background:rgba(255,255,255,0.5);
+  border:1px solid rgba(255,255,255,0.6);
+  border-radius:999px;
+  font-size:12px;color:var(--text-light);
+}
+
+/* === Reminders === */
+.reminders-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+.reminder-card{
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border);
+  border-radius:18px;
+  padding:28px 24px;
+  box-shadow:var(--shadow);
+  transition:all 0.3s cubic-bezier(0.22,1,0.36,1);
+  display:flex;gap:18px;
+  align-items:flex-start;
+}
+.reminder-card:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-lg);
+}
+.reminder-icon{
+  width:44px;height:44px;
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.ri-green{background:rgba(155,184,158,0.2)}
+.ri-pink{background:rgba(222,181,180,0.2)}
+.ri-lavender{background:rgba(166,152,184,0.2)}
+.ri-cream{background:rgba(237,231,219,0.5)}
+.reminder-content h4{
+  font-size:15px;font-weight:500;
+  margin-bottom:5px;color:var(--text);
+}
+.reminder-content p{
+  font-size:13px;color:var(--text-light);
+  line-height:1.9;
+}
+
+/* === Footer === */
+.footer{
+  padding:50px 40px;
+  text-align:center;
+  border-top:1px solid rgba(61,58,54,0.06);
+  max-width:1100px;margin:0 auto;
+}
+.footer-text{
+  font-size:13px;color:var(--text-light);
+  letter-spacing:1px;
+}
+.footer-text .heart{color:var(--pink)}
+
+/* === Scroll Reveal === */
+.reveal{
+  opacity:0;
+  transform:translateY(40px);
+  transition:all 0.8s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:0.1s}
+.reveal-d2{transition-delay:0.2s}
+.reveal-d3{transition-delay:0.3s}
+.reveal-d4{transition-delay:0.4s}
+
+/* === Responsive === */
+@media(max-width:900px){
+  section,.quote-section,.breathing-wrap{padding:80px 24px}
+  .nav{padding:0 24px}
+  .scenic{padding:60px 24px}
+  .scenic:nth-child(odd) .scenic-inner,
+  .scenic:nth-child(even) .scenic-inner{
+    margin:0 auto;text-align:center;
+  }
+  .scenic:nth-child(even) .scenic-emoji{margin:0 auto}
+  .reminders-grid{grid-template-columns:1fr}
+  .breathing-container{flex-direction:column;gap:36px}
+  .breathing-text{text-align:center}
+  .breathing-tips{justify-content:center}
+  .nav-links{gap:18px}
+  .nav-links a{font-size:13px}
+  .landscape{min-height:600px}
+}
+@media(max-width:600px){
+  .hero-title{font-size:40px}
+  .nav-links{display:none}
+  .scenic{min-height:auto;padding:80px 20px}
+  .reminders-grid{gap:14px}
+  .reminder-card{padding:22px 18px}
+  .landscape{min-height:500px}
+}
+@media(prefers-reduced-motion:reduce){
+  .landscape-layer,.cloud,.birds,.breathing-core,.breathing-ring{animation:none!important}
+  .float-particle{animation:none!important}
+  .reveal-3d,.scenic-emoji,.scenic-title,.scenic-text{opacity:1;transform:none!important}
+  .tilt-card .tilt-inner{transform:none!important}
+  .glass-panel{animation:none!important}
+}
+
+/* === Glass Panels === */
+.glass-panel{
+  position:fixed;
+  border-radius:50%;
+  backdrop-filter:blur(60px);
+  -webkit-backdrop-filter:blur(60px);
+  border:1px solid rgba(255,255,255,0.25);
+  pointer-events:none;
+  z-index:0;
+}
+.gp-1{
+  width:300px;height:300px;
+  background:radial-gradient(circle,rgba(155,184,158,0.08),rgba(255,255,255,0.02));
+  top:15%;left:-5%;
+  animation:gpFloat1 30s ease-in-out infinite;
+}
+.gp-2{
+  width:250px;height:250px;
+  background:radial-gradient(circle,rgba(212,160,160,0.06),rgba(255,255,255,0.02));
+  top:45%;right:-8%;
+  animation:gpFloat2 25s ease-in-out infinite;
+  animation-delay:-8s;
+}
+.gp-3{
+  width:200px;height:200px;
+  background:radial-gradient(circle,rgba(184,169,201,0.07),rgba(255,255,255,0.02));
+  bottom:20%;left:10%;
+  animation:gpFloat1 28s ease-in-out infinite reverse;
+}
+.gp-4{
+  width:180px;height:180px;
+  background:radial-gradient(circle,rgba(155,184,158,0.06),rgba(255,255,255,0.02));
+  top:70%;right:15%;
+  animation:gpFloat2 22s ease-in-out infinite;
+  animation-delay:-12s;
+}
+@keyframes gpFloat1{
+  0%,100%{transform:translate(0,0)}
+  33%{transform:translate(20px,-30px)}
+  66%{transform:translate(-15px,20px)}
+}
+@keyframes gpFloat2{
+  0%,100%{transform:translate(0,0)}
+  50%{transform:translate(-25px,15px)}
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+  <div class="nav-logo">✦ 治愈花园</div>
+  <ul class="nav-links">
+    <li><a href="#healing">温柔小事</a></li>
+    <li><a href="#breathe">深呼吸</a></li>
+    <li><a href="#reminders">温柔提醒</a></li>
+  </ul>
+</nav>
+
+<!-- Floating 3D Particles -->
+<div class="float-particles">
+  <div class="float-particle fp-1"></div>
+  <div class="float-particle fp-2"></div>
+  <div class="float-particle fp-3"></div>
+  <div class="float-particle fp-4"></div>
+  <div class="float-particle fp-5"></div>
+</div>
+
+<!-- Glass Panels -->
+<div class="glass-panel gp-1"></div>
+<div class="glass-panel gp-2"></div>
+<div class="glass-panel gp-3"></div>
+<div class="glass-panel gp-4"></div>
+
+<!-- === Parallax Landscape Hero === -->
+<div class="landscape" id="landscape">
+
+  <!-- Clouds -->
+  <svg class="cloud cloud-1" width="120" height="50" viewBox="0 0 120 50">
+    <ellipse cx="60" cy="30" rx="50" ry="18" fill="rgba(255,255,255,0.7)"/>
+    <ellipse cx="40" cy="25" rx="30" ry="14" fill="rgba(255,255,255,0.6)"/>
+    <ellipse cx="80" cy="28" rx="28" ry="12" fill="rgba(255,255,255,0.5)"/>
+  </svg>
+  <svg class="cloud cloud-2" width="100" height="40" viewBox="0 0 100 40">
+    <ellipse cx="50" cy="24" rx="40" ry="14" fill="rgba(255,255,255,0.6)"/>
+    <ellipse cx="35" cy="20" rx="25" ry="10" fill="rgba(255,255,255,0.5)"/>
+  </svg>
+  <svg class="cloud cloud-3" width="90" height="36" viewBox="0 0 90 36">
+    <ellipse cx="45" cy="22" rx="35" ry="12" fill="rgba(255,255,255,0.5)"/>
+    <ellipse cx="60" cy="18" rx="22" ry="10" fill="rgba(255,255,255,0.4)"/>
+  </svg>
+
+  <!-- Birds -->
+  <svg class="birds" width="80" height="30" viewBox="0 0 80 30">
+    <path d="M5 15 Q12 5 20 12" stroke="#5a5550" stroke-width="1.5" fill="none" opacity="0.5"/>
+    <path d="M25 10 Q32 2 40 10" stroke="#5a5550" stroke-width="1.5" fill="none" opacity="0.4"/>
+    <path d="M50 14 Q56 6 62 12" stroke="#5a5550" stroke-width="1.2" fill="none" opacity="0.35"/>
+  </svg>
+
+  <!-- Layer 1: Distant mountains (slowest) -->
+  <div class="landscape-layer" style="--offset:0.92">
+    <svg viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice">
+      <path d="M0,400 L0,280 Q120,180 240,220 Q360,160 480,200 Q600,140 720,190 Q840,130 960,180 Q1080,120 1200,170 Q1320,140 1440,200 L1440,400 Z" fill="#b8c4a8" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <!-- Layer 2: Mid hills -->
+  <div class="landscape-layer" style="--offset:0.85">
+    <svg viewBox="0 0 1440 350" preserveAspectRatio="xMidYMax slice">
+      <path d="M0,350 L0,260 Q180,200 360,240 Q540,180 720,230 Q900,170 1080,220 Q1260,190 1440,240 L1440,350 Z" fill="#9bb89e" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <!-- Layer 3: Trees silhouettes -->
+  <div class="landscape-layer" style="--offset:0.75">
+    <svg viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice">
+      <!-- Tree group left -->
+      <ellipse cx="120" cy="220" rx="55" ry="70" fill="#7a9e7e" opacity="0.6"/>
+      <ellipse cx="180" cy="230" rx="40" ry="55" fill="#6b8f71" opacity="0.5"/>
+      <rect x="145" y="260" width="8" height="40" fill="#5a7a5e" opacity="0.4"/>
+      <!-- Tree group center -->
+      <ellipse cx="720" cy="210" rx="65" ry="80" fill="#7a9e7e" opacity="0.55"/>
+      <ellipse cx="680" cy="225" rx="45" ry="60" fill="#6b8f71" opacity="0.5"/>
+      <ellipse cx="760" cy="230" rx="38" ry="50" fill="#8aad8e" opacity="0.45"/>
+      <!-- Tree group right -->
+      <ellipse cx="1250" cy="225" rx="50" ry="65" fill="#7a9e7e" opacity="0.5"/>
+      <ellipse cx="1300" cy="235" rx="42" ry="55" fill="#6b8f71" opacity="0.45"/>
+      <!-- Ground -->
+      <path d="M0,300 L0,270 Q360,250 720,265 Q1080,250 1440,270 L1440,300 Z" fill="#8aad8e" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <!-- Layer 4: Near trees + flowers -->
+  <div class="landscape-layer" style="--offset:0.6">
+    <svg viewBox="0 0 1440 250" preserveAspectRatio="xMidYMax slice">
+      <!-- Big trees -->
+      <ellipse cx="80" cy="160" rx="70" ry="90" fill="#5a7a5e" opacity="0.7"/>
+      <rect x="72" y="220" width="16" height="30" fill="#4a6a4e" opacity="0.5"/>
+      <ellipse cx="1360" cy="170" rx="65" ry="85" fill="#5a7a5e" opacity="0.65"/>
+      <rect x="1352" y="225" width="14" height="25" fill="#4a6a4e" opacity="0.5"/>
+      <!-- Flowers -->
+      <circle cx="300" cy="230" r="4" fill="#c9908f" opacity="0.6"/>
+      <circle cx="320" cy="225" r="3" fill="#deb5b4" opacity="0.5"/>
+      <circle cx="340" cy="232" r="3.5" fill="#c9908f" opacity="0.55"/>
+      <circle cx="1100" cy="228" r="4" fill="#deb5b4" opacity="0.55"/>
+      <circle cx="1120" cy="222" r="3" fill="#c9908f" opacity="0.5"/>
+      <circle cx="1140" cy="230" r="3.5" fill="#deb5b4" opacity="0.5"/>
+      <!-- Ground path -->
+      <path d="M0,250 L0,235 Q360,220 720,230 Q1080,218 1440,235 L1440,250 Z" fill="#7a9e7e" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <!-- Layer 5: Foreground grass (fastest) -->
+  <div class="landscape-layer" style="--offset:0.3">
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="xMidYMax slice">
+      <path d="M0,120 L0,80 Q180,60 360,75 Q540,55 720,70 Q900,50 1080,65 Q1260,55 1440,70 L1440,120 Z" fill="#6b8f71" opacity="0.7"/>
+      <path d="M0,120 L0,95 Q360,80 720,90 Q1080,78 1440,92 L1440,120 Z" fill="#5a7a5e" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <!-- Hero Text -->
+  <div class="hero-overlay">
+    <div class="hero-badge">✦ 走 进 治 愈 ✦</div>
+    <h1 class="hero-title">今天也<br><span class="highlight">辛苦了</span></h1>
+    <p class="hero-sub">走进这片花园，让温柔的风和安静的光包围你。</p>
+    <a href="#healing" class="hero-cta">开始漫步 →</a>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-mouse"></div>
+    <span>SCROLL</span>
+  </div>
+</div>
+
+<!-- Path transition -->
+<div class="path-transition"></div>
+
+<!-- Main Content -->
+<div class="content">
+
+  <!-- Healing Scenic Walk -->
+  <div id="healing">
+
+    <div class="scenic scenic-left theme-sunrise">
+      <div class="scenic-scene">
+        <svg viewBox="0 0 1440 200" preserveAspectRatio="xMidYMax slice" style="opacity:0.7">
+          <circle cx="1050" cy="80" r="70" fill="rgba(255,180,100,0.6)"/>
+          <line x1="1050" y1="80" x2="950" y2="0" stroke="rgba(255,180,100,0.4)" stroke-width="2"/>
+          <line x1="1050" y1="80" x2="1050" y2="0" stroke="rgba(255,180,100,0.4)" stroke-width="2"/>
+          <line x1="1050" y1="80" x2="1150" y2="0" stroke="rgba(255,180,100,0.4)" stroke-width="2"/>
+          <path d="M0,200 L0,160 Q200,120 400,150 Q600,110 800,140 Q1000,100 1200,130 Q1400,110 1440,140 L1440,200 Z" fill="rgba(200,170,130,0.35)"/>
+          <path d="M0,200 L0,180 Q360,160 720,175 Q1080,155 1440,170 L1440,200 Z" fill="rgba(180,150,110,0.3)"/>
+        </svg>
+      </div>
+      <div class="scenic-bg" style="width:400px;height:400px;background:radial-gradient(circle,rgba(212,140,100,0.25),transparent 70%);top:10%;right:5%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">🌅</span>
+        <h2 class="scenic-title">看一次日出</h2>
+        <p class="scenic-text">清晨的光线，是世界上最温柔的闹钟。<br>不需要远行，窗边就很好。<br>让第一缕阳光轻轻落在脸上，<br>感受新的一天，从温暖开始。<br>那些还没解决的问题，<br>等喝完这杯水再说吧。<br>反正太阳每天都会升起来，你也是。<span class="scenic-sign">—— 给早起的你</span></p>
+      </div>
+    </div>
+
+    <div class="scenic scenic-right theme-tea">
+      <div class="scenic-scene">
+        <svg viewBox="0 0 1440 200" preserveAspectRatio="xMidYMax slice" style="opacity:0.7">
+          <path d="M0,200 L0,170 Q180,140 360,160 Q540,130 720,155 Q900,125 1080,150 Q1260,135 1440,155 L1440,200 Z" fill="rgba(180,160,130,0.35)"/>
+          <path d="M0,200 L0,185 Q360,170 720,180 Q1080,168 1440,178 L1440,200 Z" fill="rgba(160,140,110,0.3)"/>
+          <ellipse cx="200" cy="120" rx="15" ry="30" fill="rgba(180,160,130,0.25)"/>
+          <ellipse cx="220" cy="110" rx="12" ry="25" fill="rgba(180,160,130,0.2)"/>
+          <ellipse cx="240" cy="125" rx="14" ry="28" fill="rgba(180,160,130,0.22)"/>
+        </svg>
+      </div>
+      <div class="scenic-bg" style="width:350px;height:350px;background:radial-gradient(circle,rgba(155,184,158,0.2),transparent 70%);bottom:15%;left:8%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">🍵</span>
+        <h2 class="scenic-title">泡一杯热茶</h2>
+        <p class="scenic-text">看茶叶在水中慢慢舒展，<br>热气氤氲上升。<br>这一刻什么都不用想，<br>只是静静等待，就已经很好。<br>茶香慢慢填满房间，<br>也填满心里那些空着的角落。<br>你值得拥有这样安静的几分钟。<span class="scenic-sign">—— 给疲惫的你</span></p>
+      </div>
+    </div>
+
+    <div class="scenic scenic-left theme-book">
+      <div class="scenic-scene">
+        <svg viewBox="0 0 1440 200" preserveAspectRatio="xMidYMax slice" style="opacity:0.7">
+          <path d="M0,200 L0,165 Q240,130 480,155 Q720,120 960,145 Q1200,125 1440,150 L1440,200 Z" fill="rgba(160,180,200,0.35)"/>
+          <path d="M0,200 L0,182 Q360,168 720,178 Q1080,165 1440,175 L1440,200 Z" fill="rgba(140,160,180,0.3)"/>
+          <rect x="1100" y="100" width="25" height="35" rx="2" fill="rgba(160,180,200,0.3)" transform="rotate(15 1112 117)"/>
+          <rect x="1150" y="120" width="25" height="35" rx="2" fill="rgba(160,180,200,0.25)" transform="rotate(-10 1162 137)"/>
+        </svg>
+      </div>
+      <div class="scenic-bg" style="width:300px;height:300px;background:radial-gradient(circle,rgba(184,169,201,0.2),transparent 70%);top:20%;left:15%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">📖</span>
+        <h2 class="scenic-title">读几页闲书</h2>
+        <p class="scenic-text">不必读完，不必做笔记。<br>只是翻几页，<br>让文字像溪水一样流过心间，<br>带走一些疲惫。<br>那些别人的故事，<br>偶尔也能治愈自己的伤。<br>今晚，让书陪你入睡。<span class="scenic-sign">—— 给失眠的你</span></p>
+      </div>
+    </div>
+
+    <div class="scenic scenic-right theme-tree">
+      <div class="scenic-scene">
+        <svg viewBox="0 0 1440 250" preserveAspectRatio="xMidYMax slice" style="opacity:0.7">
+          <path d="M0,250 L0,200 Q180,160 360,190 Q540,150 720,180 Q900,140 1080,175 Q1260,155 1440,185 L1440,250 Z" fill="rgba(120,170,120,0.35)"/>
+          <path d="M0,250 L0,225 Q360,210 720,220 Q1080,208 1440,218 L1440,250 Z" fill="rgba(100,150,100,0.3)"/>
+          <ellipse cx="150" cy="160" rx="40" ry="50" fill="rgba(120,170,120,0.3)"/>
+          <ellipse cx="1200" cy="170" rx="35" ry="45" fill="rgba(120,170,120,0.28)"/>
+          <rect x="145" y="195" width="8" height="25" fill="rgba(100,150,100,0.25)"/>
+          <rect x="1196" y="200" width="7" height="22" fill="rgba(100,150,100,0.22)"/>
+        </svg>
+      </div>
+      <div class="scenic-bg" style="width:380px;height:380px;background:radial-gradient(circle,rgba(155,184,158,0.25),transparent 70%);bottom:10%;right:10%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">🌳</span>
+        <h2 class="scenic-title">摸一摸植物</h2>
+        <p class="scenic-text">叶片上的脉络，像大地的掌纹。<br>轻轻触碰，<br>感受那份沉默却坚定的生命力。<br>它不会说话，但一直在生长。<br>就像你一样。<br>即使没人看见，也一直在努力。<span class="scenic-sign">—— 给孤独的你</span></p>
+      </div>
+    </div>
+
+    <div class="scenic scenic-left theme-moon">
+      <div class="scenic-scene">
+        <svg viewBox="0 0 1440 200" preserveAspectRatio="xMidYMax slice" style="opacity:0.7">
+          <path d="M0,200 L0,170 Q240,140 480,160 Q720,130 960,155 Q1200,135 1440,158 L1440,200 Z" fill="rgba(140,130,180,0.3)"/>
+          <path d="M0,200 L0,185 Q360,172 720,182 Q1080,170 1440,180 L1440,200 Z" fill="rgba(120,110,160,0.25)"/>
+          <circle cx="300" cy="60" r="3" fill="rgba(160,150,200,0.5)"/>
+          <circle cx="500" cy="40" r="2.5" fill="rgba(160,150,200,0.45)"/>
+          <circle cx="700" cy="70" r="2" fill="rgba(160,150,200,0.48)"/>
+          <circle cx="900" cy="45" r="3" fill="rgba(160,150,200,0.4)"/>
+          <circle cx="1100" cy="55" r="2.5" fill="rgba(160,150,200,0.45)"/>
+          <circle cx="400" cy="90" r="1.8" fill="rgba(160,150,200,0.35)"/>
+          <circle cx="800" cy="85" r="2.2" fill="rgba(160,150,200,0.38)"/>
+          <circle cx="1200" cy="75" r="2" fill="rgba(160,150,200,0.42)"/>
+        </svg>
+      </div>
+      <div class="scenic-bg" style="width:320px;height:320px;background:radial-gradient(circle,rgba(212,160,160,0.2),transparent 70%);top:15%;left:5%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">🌙</span>
+        <h2 class="scenic-title">抬头看看月亮</h2>
+        <p class="scenic-text">月亮不赶时间，<br>阴晴圆缺都是它本来的样子。<br>你也一样，<br>不需要时刻完美。<br>今晚的月光，<br>是给所有还在努力的人的礼物。<br>你看，月亮也在陪着你熬夜呢。<span class="scenic-sign">—— 给熬夜的你</span></p>
+      </div>
+    </div>
+
+    <div class="scenic scenic-right theme-music">
+      <div class="scenic-scene">
+        <svg viewBox="0 0 1440 200" preserveAspectRatio="xMidYMax slice" style="opacity:0.7">
+          <path d="M0,200 L0,168 Q200,138 400,162 Q600,128 800,155 Q1000,130 1200,152 Q1400,138 1440,155 L1440,200 Z" fill="rgba(180,150,110,0.35)"/>
+          <path d="M0,200 L0,183 Q360,170 720,180 Q1080,168 1440,177 L1440,200 Z" fill="rgba(160,130,90,0.3)"/>
+          <text x="1100" y="100" font-size="28" fill="rgba(180,150,110,0.35)" font-family="serif">♪</text>
+          <text x="1180" y="130" font-size="24" fill="rgba(180,150,110,0.3)" font-family="serif">♫</text>
+          <text x="1250" y="110" font-size="20" fill="rgba(180,150,110,0.32)" font-family="serif">♪</text>
+        </svg>
+      </div>
+      <div class="scenic-bg" style="width:360px;height:360px;background:radial-gradient(circle,rgba(184,169,201,0.25),transparent 70%);bottom:20%;right:15%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">🎵</span>
+        <h2 class="scenic-title">听一首老歌</h2>
+        <p class="scenic-text">旋律是时间的书签。<br>一首老歌，<br>就能把你带回某个温暖的下午。<br>那些快乐从未走远，<br>闭上眼睛，<br>让音符带着你飘回记忆里最柔软的角落。<br>想家的时候，就听听这首歌吧。<span class="scenic-sign">—— 给想家的你</span></p>
+      </div>
+    </div>
+
+    <div class="scenic scenic-left theme-cloud">
+      <div class="scenic-scene">
+        <svg viewBox="0 0 1440 200" preserveAspectRatio="xMidYMax slice" style="opacity:0.7">
+          <path d="M0,200 L0,172 Q240,145 480,165 Q720,135 960,158 Q1200,140 1440,162 L1440,200 Z" fill="rgba(160,180,190,0.3)"/>
+          <path d="M0,200 L0,186 Q360,174 720,183 Q1080,172 1440,182 L1440,200 Z" fill="rgba(140,160,170,0.25)"/>
+          <ellipse cx="250" cy="80" rx="50" ry="18" fill="rgba(180,200,210,0.3)"/>
+          <ellipse cx="230" cy="72" rx="30" ry="14" fill="rgba(180,200,210,0.25)"/>
+          <ellipse cx="280" cy="75" rx="25" ry="12" fill="rgba(180,200,210,0.28)"/>
+          <ellipse cx="1100" cy="60" rx="45" ry="16" fill="rgba(180,200,210,0.28)"/>
+          <ellipse cx="1080" cy="52" rx="28" ry="12" fill="rgba(180,200,210,0.22)"/>
+          <ellipse cx="1130" cy="55" rx="22" ry="10" fill="rgba(180,200,210,0.25)"/>
+        </svg>
+      </div>
+      <div class="scenic-bg" style="width:340px;height:340px;background:radial-gradient(circle,rgba(155,184,158,0.2),transparent 70%);top:25%;left:10%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">☁️</span>
+        <h2 class="scenic-title">发一会儿呆</h2>
+        <p class="scenic-text">什么都不做，<br>也是一种温柔的休息。<br>看窗外的云慢慢飘过，<br>让思绪像蒲公英一样随风散开。<br>你的大脑也需要充电的时间，<br>不必觉得愧疚。<br>今天辛苦了，就到这里吧。<span class="scenic-sign">—— 给忙碌的你</span></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Quote -->
+  <div class="quote-section reveal-3d">
+    <div class="quote-bg"></div>
+    <div class="quote-mark">"</div>
+    <p class="quote-text">你不需要跑得很快，<br>也不需要走得很远。<br>慢慢来，花会在该开的时候开，<br>你会在对的时间到达。</p>
+    <p class="quote-author">—— 写给此刻的你</p>
+  </div>
+
+  <!-- Breathing -->
+  <section id="breathe" class="breathing-wrap reveal-3d">
+    <div class="section-header">
+      <div class="section-tag">放松时刻</div>
+      <h2 class="section-title">一起深呼吸</h2>
+    </div>
+    <div class="breathing-container">
+      <div class="breathing-visual">
+        <div class="breathing-ring"></div>
+        <div class="breathing-ring"></div>
+        <div class="breathing-ring"></div>
+        <div class="breathing-core" onclick="document.getElementById('breathText').textContent=document.getElementById('breathText').textContent==='吸气'?'呼气':'吸气'">
+          <span id="breathText">吸气</span>
+        </div>
+      </div>
+      <div class="breathing-text">
+        <h3>跟随着节奏<br>让身体慢下来</h3>
+        <p>闭上眼睛，跟随圆圈的节奏。<br>吸气的时候，想象阳光洒满全身，<br>呼气的时候，让所有紧张随着气息离开。</p>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Reminders -->
+  <div id="reminders">
+
+    <div class="scenic scenic-left theme-gold">
+      <div class="scenic-bg" style="width:360px;height:360px;background:radial-gradient(circle,rgba(212,197,169,0.2),transparent 70%);top:15%;right:10%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">💛</span>
+        <h2 class="scenic-title">你已经很努力了</h2>
+        <p class="scenic-text">不要总是盯着还没做到的事。<br>回头看看，<br>你已经走了很远的路，<br>只是自己没发现而已。<br>那些熬过的夜、咬牙撑过的日子，<br>都是你勇敢的证据。<br>你比自己想象的，要坚强得多。<span class="scenic-sign">—— 你比想象中坚强</span></p>
+      </div>
+    </div>
+
+    <div class="scenic scenic-right theme-green">
+      <div class="scenic-bg" style="width:320px;height:320px;background:radial-gradient(circle,rgba(155,184,158,0.2),transparent 70%);bottom:20%;left:12%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">😌</span>
+        <h2 class="scenic-title">休息不是偷懒</h2>
+        <p class="scenic-text">手机没电了要充电，<br>人累了也要休息。<br>这不是逃避，<br>是为了走更远的路。<br>给自己放一天假，<br>什么都不做，天不会塌下来。<br>你不是机器，你是一个人。<span class="scenic-sign">—— 允许自己休息</span></p>
+      </div>
+    </div>
+
+    <div class="scenic scenic-left theme-pink">
+      <div class="scenic-bg" style="width:340px;height:340px;background:radial-gradient(circle,rgba(184,169,201,0.2),transparent 70%);top:10%;left:8%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">🌸</span>
+        <h2 class="scenic-title">不必事事完美</h2>
+        <p class="scenic-text">八十分的人生也很好。<br>留一点空间给意外和惊喜，<br>完美主义有时候是温柔的敌人。<br>做到"足够好"，<br>就已经很了不起了。<span class="scenic-sign">—— 放过自己</span></p>
+      </div>
+    </div>
+
+    <div class="scenic scenic-right theme-blue">
+      <div class="scenic-bg" style="width:300px;height:300px;background:radial-gradient(circle,rgba(212,160,160,0.2),transparent 70%);bottom:15%;right:8%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">🌊</span>
+        <h2 class="scenic-title">情绪没有对错</h2>
+        <p class="scenic-text">难过就难过，生气就生气。<br>允许自己感受每一种情绪，<br>它们都是你的一部分。<br>压抑不会让坏情绪消失，<br>接纳才会。<br>哭也没关系，眼泪也是一种释放。<span class="scenic-sign">—— 你的情绪都值得被看见</span></p>
+      </div>
+    </div>
+
+    <div class="scenic scenic-left theme-purple">
+      <div class="scenic-bg" style="width:380px;height:380px;background:radial-gradient(circle,rgba(155,184,158,0.25),transparent 70%);top:20%;right:15%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">🌱</span>
+        <h2 class="scenic-title">变化是成长的证据</h2>
+        <p class="scenic-text">你和三年前的自己不一样了，<br>这很好。<br>不必为改变感到愧疚，<br>那是你在长大。<br>每一次蜕变，<br>都值得被庆祝。<span class="scenic-sign">—— 给正在改变的你</span></p>
+      </div>
+    </div>
+
+    <div class="scenic scenic-right theme-warm">
+      <div class="scenic-bg" style="width:350px;height:350px;background:radial-gradient(circle,rgba(222,181,180,0.2),transparent 70%);bottom:10%;left:10%"></div>
+      <div class="scenic-inner">
+        <span class="scenic-emoji">✨</span>
+        <h2 class="scenic-title">你值得被温柔对待</h2>
+        <p class="scenic-text">不只是别人对你，<br>你对自己也要温柔。<br>像对待最好的朋友那样，<br>对自己说一句没关系。<br>你值得被爱，<br>首先被自己爱。<br>今晚记得早点睡，明天会更好的。<span class="scenic-sign">—— 给善良的你</span></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p class="footer-text">🌸 愿你被这个世界温柔以待 · 今天也是美好的一天 <span class="heart">♥</span></p>
+  </footer>
+
+</div>
+
+<script>
+// === Parallax Landscape ===
+const layers=document.querySelectorAll('.landscape-layer');
+const landscape=document.getElementById('landscape');
+let ticking=false;
+
+function updateParallax(){
+  const scrollY=window.scrollY;
+  const lh=landscape.offsetHeight;
+  if(scrollY>lh)return;
+  layers.forEach(layer=>{
+    const offset=parseFloat(layer.style.getPropertyValue('--offset'))||0;
+    const move=scrollY*(1-offset)*0.8;
+    layer.style.transform='translateY('+move+'px)';
+  });
+  ticking=false;
+}
+
+window.addEventListener('scroll',()=>{
+  if(!ticking){
+    requestAnimationFrame(updateParallax);
+    ticking=true;
+  }
+},{passive:true});
+
+// === Nav Scroll ===
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',window.scrollY>80);
+},{passive:true});
+
+// === Scroll Reveal ===
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting)e.target.classList.add('visible');
+  });
+},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal,.reveal-3d').forEach(el=>observer.observe(el));
+
+// === Scenic Section Reveal ===
+const scenicObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting)e.target.classList.add('in-view');
+  });
+},{threshold:0.3});
+document.querySelectorAll('.scenic').forEach(el=>scenicObserver.observe(el));
+
+// === 3D Tilt Effect ===
+document.querySelectorAll('.tilt-card').forEach(card=>{
+  const inner=card.querySelector('.tilt-inner');
+  const glare=card.querySelector('.tilt-glare');
+  if(!inner)return;
+
+  card.addEventListener('mousemove',e=>{
+    const rect=card.getBoundingClientRect();
+    const x=e.clientX-rect.left;
+    const y=e.clientY-rect.top;
+    const cx=rect.width/2;
+    const cy=rect.height/2;
+    const rotateY=((x-cx)/cx)*12;
+    const rotateX=((cy-y)/cy)*12;
+    inner.style.transform=`rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`;
+    if(glare){
+      const gx=(x/rect.width)*100;
+      const gy=(y/rect.height)*100;
+      glare.style.setProperty('--glare-x',gx+'%');
+      glare.style.setProperty('--glare-y',gy+'%');
+    }
+  });
+
+  card.addEventListener('mouseenter',()=>{
+    inner.style.transition='transform 0.1s ease-out';
+  });
+
+  card.addEventListener('mouseleave',()=>{
+    inner.style.transition='transform 0.4s ease-out';
+    inner.style.transform='rotateX(0) rotateY(0) scale3d(1,1,1)';
+    if(glare){
+      glare.style.setProperty('--glare-x','50%');
+      glare.style.setProperty('--glare-y','50%');
+    }
+  });
+});
+
+// === Mouse Parallax on Landscape ===
+const landscapeEl=document.getElementById('landscape');
+if(landscapeEl){
+  landscapeEl.addEventListener('mousemove',e=>{
+    const rect=landscapeEl.getBoundingClientRect();
+    const x=(e.clientX-rect.left)/rect.width-0.5;
+    const y=(e.clientY-rect.top)/rect.height-0.5;
+    layers.forEach(layer=>{
+      const offset=parseFloat(layer.style.getPropertyValue('--offset'))||0;
+      const depth=(1-offset)*20;
+      const moveX=x*depth;
+      const moveY=y*depth;
+      const scrollMove=window.scrollY*(1-offset)*0.8;
+      layer.style.transform=`translate(${moveX}px,${scrollMove+moveY}px)`;
+    });
+  });
+}
+
+// === Smooth Scroll ===
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+</script>
+
+</body>
+</html>
